@@ -28,8 +28,6 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
-import static java.lang.System.load;
 
 public class MainActivity extends AppCompatActivity implements EditSettingsDialog.NoticeDialogListener {
     private static String kHostname;
@@ -75,10 +73,7 @@ public class MainActivity extends AppCompatActivity implements EditSettingsDialo
     }
 
     public void snack(String message) {
-        Snackbar snackbar = Snackbar
-                .make(coordinatorLayout, "Welcome to AndroidHive", Snackbar.LENGTH_LONG);
-
-        snackbar.show();
+      
     }
 
     @Override
