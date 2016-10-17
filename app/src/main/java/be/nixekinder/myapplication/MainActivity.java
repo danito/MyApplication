@@ -7,8 +7,8 @@ import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.Menu;
@@ -19,14 +19,14 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.support.design.widget.Snackbar;
 
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Transformation;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.Set;
 
 
 public class MainActivity extends AppCompatActivity implements EditSettingsDialog.NoticeDialogListener {
@@ -35,6 +35,12 @@ public class MainActivity extends AppCompatActivity implements EditSettingsDialo
     private TextView tvHostname;
     private TextView tvApikey;
     private SharedPreferences pref;
+    private SharedPreferences syndStatus;
+    private SharedPreferences syndPost;
+    private SharedPreferences syndImage;
+    private SharedPreferences syndLocation;
+    private SharedPreferences syndAudio;
+    private SharedPreferences syndBookmark;
     private SharedPreferences.Editor editor;
     private String kUsername;
     private String kApikey;
@@ -86,6 +92,7 @@ public class MainActivity extends AppCompatActivity implements EditSettingsDialo
         final TextView tvProfileHost = (TextView) findViewById(R.id.profile_host);
         TextView tvProfileName = (TextView) findViewById(R.id.profile_name);
         pref = getSharedPreferences("KnownApiSettings", 0);
+
         editor = pref.edit();
         kUsername = getSharedPref("kUsername", "");
         kHostname = getSharedPref("kHostname", "");
@@ -303,6 +310,11 @@ public class MainActivity extends AppCompatActivity implements EditSettingsDialo
 
     public void setSharedPref(String name, boolean value) {
         editor.putBoolean(name, value);
+        editor.commit();
+    }
+
+    public void savePrefsSet(String name, Set val) {
+        editor.putStringSet(name, val);
         editor.commit();
     }
 
