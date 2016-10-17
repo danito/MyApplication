@@ -11,7 +11,7 @@
     <string name="cancelSettings">Cancel</string>
     <string name="hintEditKnownApi"><![CDATA[Copy API key from profile->settings->tools]]></string>
     <string name="emptysettings"><![CDATA[Connection settings missing. Menu -> settings]]></string>
-    <string name="no_settings">Open settings to connect to your Known site</string>
+    <string name="no_settings">Open menu->settings to connect to your Known site</string>
     <string name="hintShareWK">share your status on your site</string>
     <string name="hintCatPost">Post</string>
 </resources>

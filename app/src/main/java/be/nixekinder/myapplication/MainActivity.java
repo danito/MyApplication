@@ -9,7 +9,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.ButtonBarLayout;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.Menu;
@@ -17,25 +16,20 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.support.design.widget.Snackbar;
 
 import com.squareup.picasso.Picasso;
-
+import com.squareup.picasso.Transformation;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.util.HashMap;
 
-import static android.R.attr.action;
-import static android.R.attr.id;
-
-import static android.R.id.message;
-
-import static java.security.CryptoPrimitive.SIGNATURE;
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
+import static java.lang.System.load;
 
 public class MainActivity extends AppCompatActivity implements EditSettingsDialog.NoticeDialogListener {
     private static String kHostname;
@@ -48,12 +42,23 @@ public class MainActivity extends AppCompatActivity implements EditSettingsDialo
     private String kApikey;
     private boolean kSet;
     private String kSignature;
+    private String kProfilePictureUrl;
+    private String kProfileDisplayName;
     private boolean connOK = false;
     private String TAG = "ineedcoffee";
     private String kAction;
     private Button btCheck;
     private JSONObject kJson;
     private ImageView profile;
+
+    private TextView updStatus;
+    private TextView updBookmark;
+    private TextView updAudio;
+    private TextView updPost;
+    private TextView updLocation;
+    private TextView updImage;
+
+
 
     public void showConnectionDialog() {
         // Create an instance of the dialog fragment and show it
@@ -69,20 +74,51 @@ public class MainActivity extends AppCompatActivity implements EditSettingsDialo
         toast.show();
     }
 
+    public void snack(String message) {
+        Snackbar snackbar = Snackbar
+                .make(coordinatorLayout, "Welcome to AndroidHive", Snackbar.LENGTH_LONG);
+
+        snackbar.show();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Typeface iconFont = FontManager.getTypeface(getApplicationContext(), FontManager.FONTAWESOME);
-        FontManager.markAsIconContainer(findViewById(R.id.icon_container), iconFont);
-
-        profile = (ImageView) findViewById(R.id.image);
+        FontManager.markAsIconContainer(findViewById(R.id.circlecontainer), iconFont);
+        profile = (ImageView) findViewById(R.id.profile_image);
+        final TextView tvProfileHost = (TextView) findViewById(R.id.profile_host);
+        TextView tvProfileName = (TextView) findViewById(R.id.profile_name);
         pref = getSharedPreferences("KnownApiSettings", 0);
         editor = pref.edit();
         kUsername = getSharedPref("kUsername", "");
         kHostname = getSharedPref("kHostname", "");
         kApikey = getSharedPref("kApikey", "");
         kSet = getSharedPref("kSet", false);
+        kProfileDisplayName = getSharedPref("kProfileDisplayName", "");
+
+        // Menu Views
+        updAudio = (TextView) findViewById(R.id.updAudio);
+        updBookmark = (TextView) findViewById(R.id.updBookmark);
+        updImage = (TextView) findViewById(R.id.updImage);
+        updLocation = (TextView) findViewById(R.id.updLocation);
+        updPost = (TextView) findViewById(R.id.updPost);
+        updStatus = (TextView) findViewById(R.id.updStatus);
+
+
+        if (!kProfileDisplayName.equals("")) {
+            tvProfileName.setText(kProfileDisplayName);
+        }
+        if (!kHostname.equals("")) {
+            tvProfileHost.setText(kHostname);
+        }
+        kProfilePictureUrl = getSharedPref("kProfilePictureUrl", "");
+        Log.i(TAG, "onCreate: KProfileURL " + kProfilePictureUrl);
+        if (!kProfilePictureUrl.equals("")) {
+            Picasso.with(getBaseContext()).load(kProfilePictureUrl).transform(new RoundedCornersTransform()).into(profile);
+        }
+
 
         if (kSet == false) {
             showWarning();
@@ -105,7 +141,74 @@ public class MainActivity extends AppCompatActivity implements EditSettingsDialo
             // Handle other intents, such as being started from the home screen
         }
 
+        // click on the profile picture 
+        profile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String url = tvProfileHost.getText().toString();
+                openUrl(url);
+            }
+        });
 
+        // Listen on Actions
+
+        updPost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setStatus("post");
+            }
+        });
+
+        updStatus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setStatus("status");
+            }
+        });
+
+        updLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setStatus("location");
+            }
+        });
+
+        updImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setStatus("image");
+            }
+        });
+
+        updAudio.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setStatus("audio");
+            }
+        });
+
+
+        updBookmark.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setStatus("bookmark");
+            }
+        });
+
+
+
+
+
+    }
+
+    private void openUrl(String url) {
+        Uri uri = Uri.parse(url); // missing 'http://' will cause crashed
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        startActivity(intent);
+    }
+
+    private void setStatus(String action) {
+        toast(action);
     }
 
     public HashMap<String, String> getConnectionSettings() {
@@ -133,7 +236,7 @@ public class MainActivity extends AppCompatActivity implements EditSettingsDialo
     }
 
     void handleSendImage(Intent intent) {
-        Uri imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
+        Uri imageUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
         if (imageUri != null) {
             // Update UI to reflect image being shared
         }
@@ -168,9 +271,7 @@ public class MainActivity extends AppCompatActivity implements EditSettingsDialo
 
         if (hasChanged) {
             //changed = true;
-            tvUsername.setText(username);
-            tvHostname.setText(hostname);
-            tvApikey.setText(apikey);
+
             testConnection();
         }
 
@@ -395,7 +496,11 @@ public class MainActivity extends AppCompatActivity implements EditSettingsDialo
                         String displayname = user.getString("displayName");
                         String imageurl = image.getString("url");
                         Log.i(TAG, "onPostExecute: " + displayname + ", " + id +  ", " + imageurl);
-                        Picasso.with(getBaseContext()).load(imageurl).into(profile);
+                        kProfileDisplayName = displayname;
+                        setSharedPref("kProfileDisplayName", displayname);
+                        kProfilePictureUrl = imageurl;
+                        setSharedPref("kProfilePictureUrl", imageurl);
+
 
                     } catch (JSONException e) {
                         e.printStackTrace();
