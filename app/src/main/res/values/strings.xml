@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">My Application</string>
+    <string name="menuSettings">Settings</string>
+    <string name="menuDialog">Edit Settings</string>
+    <string name="editUsername">Known username</string>
+    <string name="hintEditKnownUser">your Known username</string>
+    <string name="editUrl">Known hostname</string>
+    <string name="hintEditKnownHost">https://path.to.your.site</string>
+    <string name="editApiKey">Known API key</string>
+    <string name="saveSettings">Save</string>
+    <string name="cancelSettings">Cancel</string>
+    <string name="hintEditKnownApi"><![CDATA[Copy API key from profile->settings->tools]]></string>
+    <string name="emptysettings"><![CDATA[Connection settings missing. Menu -> settings]]></string>
+    <string name="no_settings">Open settings to connect to your Known site</string>
+    <string name="hintShareWK">share your status on your site</string>
+    <string name="hintCatPost">Post</string>
+</resources>
