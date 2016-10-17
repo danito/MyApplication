@@ -14,4 +14,5 @@
     <string name="no_settings">Open menu->settings to connect to your Known site</string>
     <string name="hintShareWK">share your status on your site</string>
     <string name="hintCatPost">Post</string>
+    <string name="shareitWitK">Select action to share</string>
 </resources>

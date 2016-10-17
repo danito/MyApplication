@@ -101,7 +101,6 @@ public class MainActivity extends AppCompatActivity implements EditSettingsDialo
         updPost = (TextView) findViewById(R.id.updPost);
         updStatus = (TextView) findViewById(R.id.updStatus);
 
-
         if (!kProfileDisplayName.equals("")) {
             tvProfileName.setText(kProfileDisplayName);
         }
@@ -109,9 +108,10 @@ public class MainActivity extends AppCompatActivity implements EditSettingsDialo
             tvProfileHost.setText(kHostname);
         }
         kProfilePictureUrl = getSharedPref("kProfilePictureUrl", "");
-        Log.i(TAG, "onCreate: KProfileURL " + kProfilePictureUrl);
         if (!kProfilePictureUrl.equals("")) {
             Picasso.with(getBaseContext()).load(kProfilePictureUrl).transform(new RoundedCornersTransform()).into(profile);
+            TextView tvShareIt = (TextView) findViewById(R.id.share_it_wk);
+            tvShareIt.setText(R.string.shareitWitK);
         }
 
 
@@ -182,16 +182,12 @@ public class MainActivity extends AppCompatActivity implements EditSettingsDialo
             }
         });
 
-
         updBookmark.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 setStatus("bookmark");
             }
         });
-
-
-
 
 
     }
@@ -266,19 +262,17 @@ public class MainActivity extends AppCompatActivity implements EditSettingsDialo
 
         if (hasChanged) {
             //changed = true;
+            kUsername = username;
+            kHostname = hostname;
+            kApikey = apikey;
+
+            setSharedPref("kUsername", username);
+            setSharedPref("kHostname", hostname);
+            setSharedPref("kApikey", apikey);
+            setSharedPref("kSet", true);
 
             testConnection();
         }
-
-        kUsername = username;
-        kHostname = hostname;
-        kApikey = apikey;
-
-
-        setSharedPref("kUsername", username);
-        setSharedPref("kHostname", hostname);
-        setSharedPref("kApikey", apikey);
-        setSharedPref("kSet", true);
 
     }
 
